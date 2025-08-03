@@ -1,11 +1,5 @@
 console.log('notes file is loaded');
 
-var age = 24;
-const addNumber = function(a, b){
-    return a + b;
-}
+// notes.js
+export const notes = "These are my notes";
 
-module.exports = {
-    age,
-    addNumber
-}

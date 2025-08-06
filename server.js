@@ -1,24 +1,21 @@
-import { error } from 'node:console';
-import * as fs from 'node:fs';
-import { userInfo } from 'node:os'
-// var _ = require("lodash");
-import {notes} from './notes.js';
+const express = require("express");
+const app = express();
 
-// const user = userInfo();
+app.get("/", function (req, res) {
+  res.send("hello server");
+});
+app.get("/chicken", function (req, res) {
+  res.send("hello server, i'm here to serve you delicious chicken");
+});
 
-// fs.appendFile('greeting.txt', 'Hi ' + user.username + '!\n', (err) => {
-//     if (err) throw err;
-//     console.log('File is created');
-// });
+app.get('/idli', (req,  res) => {
+    var customized_idli = {
+        name: 'rava idli',
+        size: '10 cm dia',
+        is_sambhar: true,
+        is_chutney: true
+    }
+    res.send(customized_idli); 
+})
 
-// var data = ["person", "person", 1,2,1,2, 'name', 'age', '2'];
-// var filter = _.uniq(data)
-// console.log(filter);
-// console.log(_.isString(true));
-
-
-
-
-
-
-
+app.listen(3000);

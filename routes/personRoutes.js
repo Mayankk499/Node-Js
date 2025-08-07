@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 const Person = require("../models/person");
 
@@ -46,4 +46,46 @@ router.get("/:workType", async (req, res) => {
   }
 });
 
+router.put("/:id", async (req, res) => {
+  try {
+    const personId = req.params.id;
+    const updatedPersonData = req.body;
+    const response = await Person.findByIdAndUpdate(
+      personId,
+      updatedPersonData,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    if (!response) {
+      return res.status(404).json({ error: "Person not found" }); 
+    }
+
+    console.log("data updated");
+    res.status(200).json(response);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "internal server error" });
+  }
+});
+
+router.delete('/:id', async (req, res) => {
+  try {
+    const personId = req.params.id;
+    const response = await Person.findByIdAndDelete(personId);
+
+    if (!response) {
+      return res.status(404).json({ error: "Person not found" }); 
+    }
+    console.log('data deleted successfully');
+    res.status(200).json({message: 'person deleted successfully'});
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "internal server error" });
+  }
+})
+
 module.exports = router;
+

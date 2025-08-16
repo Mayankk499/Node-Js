@@ -1,10 +1,10 @@
 const express = require("express");
 const app = express();
 const db = require("./db.js");
-require("dotenv").config();
+require("dotenv").config({ debug: false });
+
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
-const Person = require("./models/person.js");
 
 const bodyParser = require("body-parser");
 app.use(bodyParser.json());
@@ -19,19 +19,20 @@ const logRequest = (req, res, next) => {
   next();
 };
 
-app.get("/", logRequest, function (req, res) {
+const localMiddlewareAuth = passport.authenticate('local', {session: false})
+app.get("/",localMiddlewareAuth ,function (req, res) {
   res.send("Welcome to our Hotel Site");
 });
 
 app.use(logRequest);
 
-app.use(
+passport.use(
   new LocalStrategy(async (USERNAME, password, done) => {
     // Authentication logic goes here
 
     try {
       console.log("received credentials:", USERNAME, password);
-      const user = Person.findOne({ username: USERNAME });
+      const user = await Person.findOne({ username: USERNAME });
       if (!user) return done(null, false, { message: "Incorrect username." });
       const isPasswordMatch = user.password === password ? true : false;
       if (isPasswordMatch) {
@@ -39,9 +40,13 @@ app.use(
       } else {
         return done(null, false, { message: "Incorrect password" });
       }
-    } catch (error) {}
+    } catch (error) {
+      return done(error);
+    }
   })
 );
+
+app.use(passport.initialize());
 
 app.get("/", function (req, res) {
   res.send("hello server");
